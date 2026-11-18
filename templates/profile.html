@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="profile-panel">
+    <div class="content-card">
+        <div class="section-heading">
+            <h2>My Profile</h2>
+            <p>Your account details and posted questions.</p>
+        </div>
+        <div class="profile-details">
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Joined:</strong> {{ user.created_at.strftime('%d %b %Y %I:%M %p') }}</p>
+        </div>
+    </div>
+
+    <div class="section-heading">
+        <h3>My Questions</h3>
+        <p>All questions posted from your account.</p>
+    </div>
+
+    <section class="card-grid">
+        {% if user_questions %}
+            {% for question in user_questions %}
+                <article class="content-card">
+                    <div class="card-top">
+                        <span class="badge">{{ question.category_name }}</span>
+                        <span class="meta-text">{{ question.created_at.strftime('%d %b %Y %I:%M %p') }}</span>
+                    </div>
+                    <h3>{{ question.title }}</h3>
+                    <div class="vote-row">
+                        <span>Upvotes: {{ question.upvotes }}</span>
+                        <span>Downvotes: {{ question.downvotes }}</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="{{ url_for('question', id=question.id) }}" class="btn-secondary">Open</a>
+                    </div>
+                </article>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>You have not posted any questions yet.</p>
+            </div>
+        {% endif %}
+    </section>
+</section>
+{% endblock %}

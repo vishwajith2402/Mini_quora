@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="question-layout">
+    <article class="content-card large">
+        <div class="card-top">
+            <span class="badge">{{ question.category_name }}</span>
+            <span class="meta-text">{{ question.created_at.strftime('%d %b %Y %I:%M %p') }}</span>
+        </div>
+        <h2>{{ question.title }}</h2>
+        <p>{{ question.description }}</p>
+        <div class="card-meta">
+            <span>Posted by {{ question.username }}</span>
+            <span>Upvotes: {{ question.upvotes }} | Downvotes: {{ question.downvotes }}</span>
+        </div>
+        {% if session.get('user_id') %}
+            <div class="card-actions">
+                <a href="{{ url_for('vote', question_id=question.id, vote_type='up') }}" class="btn-vote">Upvote</a>
+                <a href="{{ url_for('vote', question_id=question.id, vote_type='down') }}" class="btn-vote muted">Downvote</a>
+            </div>
+        {% endif %}
+    </article>
+
+    <section class="answer-section">
+        <div class="section-heading">
+            <h3>Answers</h3>
+            <p>Read responses from other users or add your own answer.</p>
+        </div>
+
+        {% if session.get('user_id') %}
+            <form method="POST" action="{{ url_for('answer', question_id=question.id) }}" class="main-form">
+                <label>Your Answer</label>
+                <textarea name="answer_text" rows="5" placeholder="Write your answer here" required></textarea>
+                <button type="submit" class="btn-primary">Submit Answer</button>
+            </form>
+        {% else %}
+            <div class="empty-state">
+                <p>Please <a href="{{ url_for('login') }}">login</a> to answer this question.</p>
+            </div>
+        {% endif %}
+
+        <div class="answer-list">
+            {% if answers %}
+                {% for answer in answers %}
+                    <article class="answer-card">
+                        <p>{{ answer.answer_text }}</p>
+                        <div class="card-meta">
+                            <span>Answered by {{ answer.username }}</span>
+                            <span>{{ answer.created_at.strftime('%d %b %Y %I:%M %p') }}</span>
+                        </div>
+                    </article>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No answers yet. Start the discussion.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</section>
+{% endblock %}

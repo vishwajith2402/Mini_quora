@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero-panel">
+    <div>
+        <h2>Community Questions</h2>
+        <p>Browse simple Q&amp;A posts, open any question, and share your answer.</p>
+    </div>
+    {% if session.get('user_id') %}
+        <a href="{{ url_for('ask') }}" class="btn-primary inline-btn">Ask a Question</a>
+    {% else %}
+        <a href="{{ url_for('login') }}" class="btn-primary inline-btn">Login to Post</a>
+    {% endif %}
+</section>
+
+<section class="card-grid">
+    {% if questions %}
+        {% for question in questions %}
+            <article class="content-card">
+                <div class="card-top">
+                    <span class="badge">{{ question.category_name }}</span>
+                    <span class="meta-text">{{ question.created_at.strftime('%d %b %Y %I:%M %p') }}</span>
+                </div>
+                <h3>{{ question.title }}</h3>
+                <p>{{ question.description[:180] }}{% if question.description|length > 180 %}...{% endif %}</p>
+                <div class="card-meta">
+                    <span>By {{ question.username }}</span>
+                    <span>{{ question.answer_count }} Answers</span>
+                </div>
+                <div class="vote-row">
+                    <span>Upvotes: {{ question.upvotes }}</span>
+                    <span>Downvotes: {{ question.downvotes }}</span>
+                </div>
+                <div class="card-actions">
+                    <a href="{{ url_for('question', id=question.id) }}" class="btn-secondary">View</a>
+                    {% if session.get('user_id') %}
+                        <a href="{{ url_for('vote', question_id=question.id, vote_type='up') }}" class="btn-vote">Upvote</a>
+                        <a href="{{ url_for('vote', question_id=question.id, vote_type='down') }}" class="btn-vote muted">Downvote</a>
+                    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <h3>No questions yet</h3>
+            <p>Be the first user to ask a question.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
